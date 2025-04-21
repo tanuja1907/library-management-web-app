@@ -27,4 +27,8 @@ public class PatronService {
     public Patron getPatronById(int patronId){
         return patronDao.getPatronByID(patronId);
     }
+
+    public List<Patron> searchPatron(String pattern){
+        return patronDao.searchPatron(pattern);
+    }
 }

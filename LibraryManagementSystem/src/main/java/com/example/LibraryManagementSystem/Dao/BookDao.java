@@ -181,7 +181,7 @@ public class BookDao {
 //        }catch (SQLException exception){
 //            System.out.println(exception.getMessage());
 //        }
-        // hqashmap here giving unsequential data so using linkedHashMap
+        // hashmap here giving unsequential data so using linkedHashMap
         List<LinkedHashMap<String, Object>> listOfBooks = new ArrayList<>();
         String query = """ 
                 SELECT b.id as book_id ,b.title as book_title,b.author as author_name,

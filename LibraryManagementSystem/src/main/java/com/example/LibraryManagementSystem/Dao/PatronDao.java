@@ -2,6 +2,7 @@ package com.example.LibraryManagementSystem.Dao;
 
 import com.example.LibraryManagementSystem.connection.DBConnection;
 import com.example.LibraryManagementSystem.entity.Patron;
+import com.example.LibraryManagementSystem.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -42,8 +43,8 @@ public class PatronDao {
                 return new Patron(resultSet.getInt("id"),
                         resultSet.getString("name"));
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new ResourceNotFoundException(e.getMessage());
         }
         return null;
     }
@@ -79,5 +80,27 @@ public class PatronDao {
             System.out.println("Error Deleting Patron"+ex.getMessage());
         }
         return false;
+    }
+
+    public List<Patron> searchPatron(String name){
+        List<Patron> patrons=new ArrayList<>();
+        try(Connection connection=DBConnection.getConnection()){
+            String query="SELECT * FROM patrons WHERE name LIKE ?";
+            PreparedStatement ps=connection.prepareStatement(query);
+            String searchPattern="%"+name+"%";
+            ps.setString(1,searchPattern);
+            ResultSet rs=ps.executeQuery();
+            while(rs.next()){
+                Patron patron=new Patron(rs.getInt("id"),
+                        rs.getString("name"));
+                patrons.add(patron);
+            }
+        }catch(SQLException ex){
+            throw new RuntimeException("Error occured while searching for patron"+ex.getMessage());
+        }
+        if(patrons.isEmpty()){
+            throw new ResourceNotFoundException("No patrons found with this name");
+        }
+        return patrons;
     }
 }

@@ -68,7 +68,7 @@ public class BookController {
         if(books==null || books.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Book Found");
         }
-        return ResponseEntity.ok(bookService.searchBooks(term));
+        return ResponseEntity.ok(books);
     }
 
     @DeleteMapping("/{bookId}")

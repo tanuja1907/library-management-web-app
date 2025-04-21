@@ -50,8 +50,17 @@ public class PatronController {
         if(patron!=null){
             return ResponseEntity.ok(patron);
         }else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("Error!!!","Patron with id:"+patronId+"not found"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("Error!!!","Patron with id:"+patronId+" not found"));
         }
 
+    }
+
+    @GetMapping("/search")
+    public  ResponseEntity<Object> searchPatron(@RequestParam String pattern){
+        List<Patron> patrons=patronService.searchPatron(pattern);
+        if(patrons==null || patrons.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Such Patrons Found");
+        }
+        return ResponseEntity.ok(patrons);
     }
 }
