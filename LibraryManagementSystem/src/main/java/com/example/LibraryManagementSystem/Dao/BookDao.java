@@ -2,6 +2,7 @@ package com.example.LibraryManagementSystem.Dao;
 
 import com.example.LibraryManagementSystem.connection.DBConnection;
 import com.example.LibraryManagementSystem.entity.Book;
+import com.example.LibraryManagementSystem.exception.DuplicateEntryException;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -11,14 +12,23 @@ import java.util.*;
 public class BookDao {
     public boolean addBook(Book book) {
         try (Connection connection = DBConnection.getConnection()) {
+            String checkQuery="SELECT id FROM books WHERE title=? AND author=?";
+            PreparedStatement ps=connection.prepareStatement(checkQuery);
+            ps.setString(1,book.getTitle());
+            ps.setString(2,book.getAuthor());
+            ResultSet check=ps.executeQuery();
+            if(check.next()){
+                throw new DuplicateEntryException("Duplicate entry: book with this title and author already exists");
+
+            }
             String query = "INSERT INTO books(title,author,is_available)  VALUES(?,?,?)";
-            PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, book.getTitle());
-            ps.setString(2, book.getAuthor());
-            ps.setBoolean(3, book.isAvailable());
-            int rowsAffected = ps.executeUpdate();
+            PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, book.getTitle());
+            preparedStatement.setString(2, book.getAuthor());
+            preparedStatement.setBoolean(3, book.isAvailable());
+            int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
-                ResultSet rs = ps.getGeneratedKeys();
+                ResultSet rs = preparedStatement.getGeneratedKeys();
                 if (rs.next()) {
                     int generatedId = rs.getInt(1);
                     book.setId(generatedId);
@@ -27,7 +37,9 @@ public class BookDao {
                 return true;
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error while adding book"+e.getMessage());
+        } catch (DuplicateEntryException e) {
+            throw new RuntimeException(e);
         }
         return false;
     }

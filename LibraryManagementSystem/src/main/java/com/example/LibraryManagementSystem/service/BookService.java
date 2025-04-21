@@ -2,12 +2,12 @@ package com.example.LibraryManagementSystem.service;
 
 import com.example.LibraryManagementSystem.Dao.BookDao;
 import com.example.LibraryManagementSystem.entity.Book;
+import com.example.LibraryManagementSystem.exception.DuplicateEntryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class BookService {
@@ -15,12 +15,12 @@ public class BookService {
     @Autowired
     private BookDao bookDao;
 
-    public Book addBook(Book book){
+    public Book addBook(Book book) throws DuplicateEntryException {
         book.setAvailable(true);
         if(bookDao.addBook(book)){
             return book;
         }else{
-             throw new RuntimeException("Failed to add Book");
+             throw new DuplicateEntryException("Duplicate entry");
         }
     }
 

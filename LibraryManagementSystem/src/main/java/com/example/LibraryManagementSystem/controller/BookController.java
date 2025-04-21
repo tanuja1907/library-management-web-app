@@ -1,15 +1,15 @@
 package com.example.LibraryManagementSystem.controller;
 
 import com.example.LibraryManagementSystem.entity.Book;
+import com.example.LibraryManagementSystem.exception.DuplicateEntryException;
 import com.example.LibraryManagementSystem.exception.ResourceNotFoundException;
 import com.example.LibraryManagementSystem.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-
+import java.util.*;
 
 
 @SuppressWarnings("ALL")
@@ -21,13 +21,17 @@ public class BookController {
     private BookService bookService;
 
     @PostMapping
-    public ResponseEntity<Book> addBook(@RequestBody Book book){
+    public ResponseEntity<Book> addBook(@RequestBody Book book) throws DuplicateEntryException {
         return  ResponseEntity.ok(bookService.addBook(book));
     }
 
     @GetMapping
-    public ResponseEntity<List<Book>> getAllBooks() {
-        return ResponseEntity.ok(bookService.getAllBooks());
+    public ResponseEntity<Object> getAllBooks() {
+        List<Book> books=bookService.getAllBooks();
+        if(books==null || books.isEmpty()){
+            return ResponseEntity.ok("No Books Found");
+        }
+        return ResponseEntity.ok(books);
     }
 
 
@@ -36,7 +40,7 @@ public class BookController {
         if(bookService.borrowBook(patronId,bookId)){
             return ResponseEntity.ok("Book Borrowed Successfully");
         }else{
-            throw new ResourceNotFoundException("Borrowing failed");
+            throw new ResourceNotFoundException("Borrowing failed!!! ,either book is already borrowed or invalid id");
         }
     }
 
@@ -45,17 +49,25 @@ public class BookController {
         if(bookService.returnBook(patronId,bookId)){
             return ResponseEntity.ok("Book returned Successfully");
         }else{
-            throw new ResourceNotFoundException("Returning failed");
+            throw new ResourceNotFoundException("Returning failed!!! ,either book is not borrowed or invalid id");
         }
     }
 
     @GetMapping("/patron/{patronId}")
-    public ResponseEntity<List<Book>> getBookByPatron(@PathVariable  int patronId){
+    public ResponseEntity<Object> getBookByPatron(@PathVariable  int patronId){
+        List<Book> books=bookService.getBooksByPatron(patronId);
+        if(books==null || books.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Book Found for this patron");
+        }
         return ResponseEntity.ok(bookService.getBooksByPatron(patronId));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Book>> searchBook(@RequestParam String term){
+    public ResponseEntity<Object> searchBook(@RequestParam String term){
+        List<Book> books=bookService.searchBooks(term);
+        if(books==null || books.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Book Found");
+        }
         return ResponseEntity.ok(bookService.searchBooks(term));
     }
 
@@ -70,7 +82,11 @@ public class BookController {
     }
 
     @GetMapping("/borrowedBooks")
-    public ResponseEntity<List<LinkedHashMap<String, Object>>> getAllBorrowedBooks(){
+    public ResponseEntity<Object> getAllBorrowedBooks(){
+        List<LinkedHashMap<String,Object>> books=bookService.booksBorrowedByPatron();
+        if(books==null || books.isEmpty()){
+            return ResponseEntity.ok("No books are currently borrowed");
+        }
         return ResponseEntity.ok(bookService.booksBorrowedByPatron());
     }
 }

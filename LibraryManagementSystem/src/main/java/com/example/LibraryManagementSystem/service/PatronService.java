@@ -24,4 +24,7 @@ public class PatronService {
     public boolean deletePatronById(int patronId){
         return patronDao.deletePatronById(patronId);
     }
+    public Patron getPatronById(int patronId){
+        return patronDao.getPatronByID(patronId);
+    }
 }

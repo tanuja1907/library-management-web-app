@@ -25,7 +25,7 @@ public class PatronDao {
                 }
                 return  true;
             }
-        } catch (Exception e) {
+        }catch (Exception e) {
             throw new RuntimeException(e);
         }
         return false;
