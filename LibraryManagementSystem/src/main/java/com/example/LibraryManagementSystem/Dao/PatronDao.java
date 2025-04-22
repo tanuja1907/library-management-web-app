@@ -132,7 +132,7 @@ public class PatronDao {
             System.out.println(updatedName);
             return ps.executeUpdate()>0;
         }catch (SQLException e){
-            System.out.println("Error in updating patron "+e.getMessage());;
+            System.out.println("Error in updating patron "+e.getMessage());
         }
         return false;
     }
