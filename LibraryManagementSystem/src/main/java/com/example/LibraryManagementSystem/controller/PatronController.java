@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/patron")
@@ -62,5 +63,18 @@ public class PatronController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Such Patrons Found");
         }
         return ResponseEntity.ok(patrons);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> updatePatronById(@PathVariable int id,@RequestBody Patron updatedPatron){
+        boolean update=patronService.updatePatron(id,updatedPatron);
+        if(update){
+            return ResponseEntity.ok("Patron updated Successfully");
+        }else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "message","Patron not updated . Either patron not found or already exist",
+                     "status","failed"
+            ));
+        }
     }
 }

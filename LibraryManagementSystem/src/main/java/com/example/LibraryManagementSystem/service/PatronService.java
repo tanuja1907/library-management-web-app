@@ -31,4 +31,8 @@ public class PatronService {
     public List<Patron> searchPatron(String pattern){
         return patronDao.searchPatron(pattern);
     }
+
+    public boolean updatePatron(int id,Patron updatedPatron){
+        return patronDao.updatePatronById(id,updatedPatron);
+    }
 }

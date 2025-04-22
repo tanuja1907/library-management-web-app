@@ -1,5 +1,5 @@
 package com.example.LibraryManagementSystem.controller;
-
+//import java.time.LocalDateTime;
 import com.example.LibraryManagementSystem.entity.Book;
 import com.example.LibraryManagementSystem.exception.DuplicateEntryException;
 import com.example.LibraryManagementSystem.exception.ResourceNotFoundException;
@@ -88,5 +88,19 @@ public class BookController {
             return ResponseEntity.ok("No books are currently borrowed");
         }
         return ResponseEntity.ok(bookService.booksBorrowedByPatron());
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> updateBook(@PathVariable int id,@RequestBody Book book){
+        boolean update= bookService.updateBook(id,book);
+        if(update){
+            return ResponseEntity.ok("Update book successfully");
+
+        }else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "message","Book not updated.Either book not found or already exist!",
+                    "status",400
+            ));
+        }
     }
 }

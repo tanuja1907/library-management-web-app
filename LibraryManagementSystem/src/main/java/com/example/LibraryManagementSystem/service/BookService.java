@@ -16,7 +16,7 @@ public class BookService {
     private BookDao bookDao;
 
     public Book addBook(Book book) throws DuplicateEntryException {
-        book.setAvailable(true);
+        book.setIsAvailable(true);
         if(bookDao.addBook(book)){
             return book;
         }else{
@@ -49,5 +49,9 @@ public class BookService {
 
     public List<LinkedHashMap<String, Object>> booksBorrowedByPatron(){
         return bookDao.getAllBorrowedBooks();
+    }
+
+    public boolean updateBook(int id,Book book){
+        return bookDao.updateBookById(id,book);
     }
 }

@@ -3,9 +3,9 @@ package com.example.LibraryManagementSystem.entity;
 
 public class Book {
     private int id;
-    private  String title;
+    private String title;
     private String author;
-    private boolean isAvailable;
+    private Boolean isAvailable;
     private Integer borrowedBy;
 
     public Book(){
@@ -33,6 +33,10 @@ public class Book {
         return author;
     }
 
+    public Boolean getIsAvailable() {
+        return isAvailable;
+    }
+
     public boolean isAvailable(){
         return isAvailable;
     }
@@ -57,7 +61,7 @@ public class Book {
         this.id = id;
     }
 
-    public void setAvailable(boolean available) {
+    public void setIsAvailable(Boolean available) {
         isAvailable = available;
     }
 

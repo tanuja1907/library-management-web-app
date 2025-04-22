@@ -2,6 +2,7 @@ package com.example.LibraryManagementSystem.Dao;
 
 import com.example.LibraryManagementSystem.connection.DBConnection;
 import com.example.LibraryManagementSystem.entity.Patron;
+import com.example.LibraryManagementSystem.exception.DuplicateEntryException;
 import com.example.LibraryManagementSystem.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Repository;
 
@@ -102,5 +103,37 @@ public class PatronDao {
             throw new ResourceNotFoundException("No patrons found with this name");
         }
         return patrons;
+    }
+
+    public boolean updatePatronById(int id,Patron patron){
+        try(Connection connection=DBConnection.getConnection()){
+            String selectQuery="SELECT * FROM patrons WHERE id=?";
+            PreparedStatement checkStatement =connection.prepareStatement(selectQuery);
+            checkStatement.setInt(1,id);
+            ResultSet rs= checkStatement.executeQuery();
+            if(!rs.next()){
+                throw new ResourceNotFoundException("User not exist");
+            }
+            String existingName=rs.getString("name");
+            String updatedName= patron.getName()!=null? patron.getName().trim() : existingName;
+            String checkQuery="SELECT id FROM patrons WHERE name=? AND id<>?";
+            PreparedStatement preparedStatement=connection.prepareStatement(checkQuery);
+            preparedStatement.setString(1,updatedName);
+            preparedStatement.setInt(2,id);
+            ResultSet checkRS=preparedStatement.executeQuery();
+            if(checkRS.next()){
+                throw new DuplicateEntryException("Duplicate user found");
+            }
+            String updateQuery="UPDATE patrons SET name=? WHERE id=?";
+            PreparedStatement ps=connection.prepareStatement(updateQuery);
+            ps.setString(1,updatedName);
+            ps.setInt(2,id);
+            System.out.println("Updated patron");
+            System.out.println(updatedName);
+            return ps.executeUpdate()>0;
+        }catch (SQLException e){
+            System.out.println("Error in updating patron "+e.getMessage());;
+        }
+        return false;
     }
 }

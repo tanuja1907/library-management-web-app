@@ -28,11 +28,7 @@ public class GlobalExceptionHandler extends  Exception{
     }
 
     @ExceptionHandler(DuplicateEntryException.class)
-    public ResponseEntity<Object> duplicateEntryException(DuplicateEntryException ex){
-        Map<String, Object> error = new HashMap<>();
-        error.put("message", "Duplicate Entry with this book found");
-        error.put("status", HttpStatus.BAD_REQUEST.value());
-        error.put("timestamp", LocalDateTime.now());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> duplicateEntryException(DuplicateEntryException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
