@@ -1,38 +1,63 @@
 package com.example.LibraryManagementSystem.service;
-
-import com.example.LibraryManagementSystem.Dao.PatronDao;
+import com.example.LibraryManagementSystem.dto.PatronDTO;
 import com.example.LibraryManagementSystem.entity.Patron;
+import com.example.LibraryManagementSystem.exception.DuplicateEntryException;
+import com.example.LibraryManagementSystem.exception.ResourceNotFoundException;
+import com.example.LibraryManagementSystem.repository.PatronRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PatronService {
     @Autowired
-    private PatronDao patronDao;
+    private PatronRepository patronRepository;
 
     public Patron addPatron(Patron patron){
-       if(patronDao.addPatron(patron))return patron;
-       else throw new RuntimeException("Failed to add Patron");
+        Optional<Patron> findPatron=patronRepository.findByName(patron.getName());
+        if(findPatron.isEmpty()){
+            return patronRepository.save(patron);
+        }
+       else throw new RuntimeException("Patron already exist");
     }
 
     public List<Patron> getAllPatrons(){
-        return patronDao.getAllPatrons();
+        return patronRepository.findAll();
     }
 
     public boolean deletePatronById(int patronId){
-        return patronDao.deletePatronById(patronId);
+       Optional<Patron> findPatron=patronRepository.findById(patronId);
+       if(findPatron.isPresent()){
+           Patron patron=findPatron.get();
+           patronRepository.delete(patron);
+           return true;
+       }else{
+           throw new ResourceNotFoundException("No patron found with id:"+patronId);
+
+       }
     }
     public Patron getPatronById(int patronId){
-        return patronDao.getPatronByID(patronId);
+        Optional<Patron> findPatron =patronRepository.findById(patronId);
+        if(findPatron.isPresent()){
+            return findPatron.get();
+        }else{
+            throw new ResourceNotFoundException("No patron found with id: "+patronId);
+        }
     }
 
-    public List<Patron> searchPatron(String pattern){
-        return patronDao.searchPatron(pattern);
+    public List<Patron> searchPatron(String searchPattern){
+        return patronRepository.findByNameContainingIgnoreCase(searchPattern);
     }
 
-    public boolean updatePatron(int id,Patron updatedPatron){
-        return patronDao.updatePatronById(id,updatedPatron);
+    public PatronDTO updatePatron(int id, PatronDTO patronDTO){
+       Patron patron=patronRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("No patron found with id: "+ id));
+       if(patronRepository.existsByNameAndIdNot(patronDTO.getName(),id)){
+           throw new DuplicateEntryException("Another patron with the same not already exist");
+       }
+       patron.setName(patronDTO.getName());
+       patronRepository.save(patron);
+       return new PatronDTO(patron.getId(),patron.getName());
     }
 }

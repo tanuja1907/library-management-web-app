@@ -1,6 +1,7 @@
 package com.example.LibraryManagementSystem.controller;
 
 
+import com.example.LibraryManagementSystem.dto.PatronDTO;
 import com.example.LibraryManagementSystem.entity.Patron;
 import com.example.LibraryManagementSystem.service.PatronService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,17 +65,17 @@ public class PatronController {
         }
         return ResponseEntity.ok(patrons);
     }
-
+//
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> updatePatronById(@PathVariable int id,@RequestBody Patron updatedPatron){
-        boolean update=patronService.updatePatron(id,updatedPatron);
-        if(update){
+    public ResponseEntity<Object> updatePatronById(@PathVariable int id, @RequestBody PatronDTO patronDTO){
+        PatronDTO update=patronService.updatePatron(id,patronDTO);
+//        if(update){
             return ResponseEntity.ok("Patron updated Successfully");
-        }else{
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-                    "message","Patron not updated . Either patron not found or already exist",
-                     "status","failed"
-            ));
-        }
+//        }else{
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+//                    "message","Patron not updated . Either patron not found or already exist",
+//                     "status","failed"
+//            ));
+//        }
     }
 }

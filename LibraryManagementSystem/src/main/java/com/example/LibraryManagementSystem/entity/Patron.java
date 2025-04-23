@@ -1,34 +1,26 @@
 package com.example.LibraryManagementSystem.entity;
 
 
-@SuppressWarnings("ALL")
-public class Patron {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
+import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+@Entity
+@Table(name="patrons")
+public class Patron {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
 
-    public Patron(){
+    @ManyToMany
+    @JoinTable(name="borrowed_books",joinColumns = @JoinColumn(name="patron_id"),inverseJoinColumns = @JoinColumn(name="book_id"))
+    private List<Book> borrowedBooks=new ArrayList<>();
 
-    }
-    public Patron(String name) {
-        this.name = name;
-    }
 
-    public Patron(int id,String name){
-        this.id=id;
-        this.name=name;
-    }
-
-    public String getName() {
-        return name;
-    }
-    public int getId(){return id;}
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

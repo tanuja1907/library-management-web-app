@@ -1,7 +1,9 @@
 package com.example.LibraryManagementSystem.controller;
-//import java.time.LocalDateTime;
+import com.example.LibraryManagementSystem.dto.BookDTO;
+import com.example.LibraryManagementSystem.dto.BookUpdateDTO;
+import com.example.LibraryManagementSystem.dto.BorrowRequestDTO;
+import com.example.LibraryManagementSystem.dto.ReturnRequestDTO;
 import com.example.LibraryManagementSystem.entity.Book;
-import com.example.LibraryManagementSystem.exception.DuplicateEntryException;
 import com.example.LibraryManagementSystem.exception.ResourceNotFoundException;
 import com.example.LibraryManagementSystem.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 
-@SuppressWarnings("ALL")
+
 @RestController
 @RequestMapping("/books")
 public class BookController {
@@ -21,7 +23,7 @@ public class BookController {
     private BookService bookService;
 
     @PostMapping
-    public ResponseEntity<Book> addBook(@RequestBody Book book) throws DuplicateEntryException {
+    public ResponseEntity<Book> addBook(@RequestBody Book book) {
         return  ResponseEntity.ok(bookService.addBook(book));
     }
 
@@ -35,36 +37,36 @@ public class BookController {
     }
 
 
-    @PostMapping("/{bookId}/borrow/{patronId}")
-    public ResponseEntity<String> boorowBook(@PathVariable int bookId,@PathVariable int patronId) throws ResourceNotFoundException {
-        if(bookService.borrowBook(patronId,bookId)){
+    @PostMapping("/borrow")
+    public ResponseEntity<String> borrowBook(@RequestBody BorrowRequestDTO borrowRequestDTO) throws ResourceNotFoundException {
+        if(bookService.borrowBook(borrowRequestDTO)){
             return ResponseEntity.ok("Book Borrowed Successfully");
         }else{
             throw new ResourceNotFoundException("Borrowing failed!!! ,either book is already borrowed or invalid id");
         }
     }
 
-    @PostMapping("/{bookId}/return/{patronId}")
-    public ResponseEntity<String> returnBook(@PathVariable int bookId,@PathVariable int patronId) throws ResourceNotFoundException {
-        if(bookService.returnBook(patronId,bookId)){
+    @PostMapping("/return")
+    public ResponseEntity<String> returnBook(@RequestBody ReturnRequestDTO returnRequestDTO) throws ResourceNotFoundException {
+        if(bookService.returnBook(returnRequestDTO)){
             return ResponseEntity.ok("Book returned Successfully");
         }else{
             throw new ResourceNotFoundException("Returning failed!!! ,either book is not borrowed or invalid id");
         }
     }
 
-    @GetMapping("/patron/{patronId}")
-    public ResponseEntity<Object> getBookByPatron(@PathVariable  int patronId){
-        List<Book> books=bookService.getBooksByPatron(patronId);
+    @GetMapping("/bookByPatronId")
+    public ResponseEntity<Object> getBookByPatron( @RequestParam int id){
+        List<BookDTO> books=bookService.getBooksByPatronId(id);
         if(books==null || books.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Book Found for this patron");
         }
-        return ResponseEntity.ok(bookService.getBooksByPatron(patronId));
+        return ResponseEntity.ok(bookService.getBooksByPatronId(id));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> searchBook(@RequestParam String term){
-        List<Book> books=bookService.searchBooks(term);
+    public ResponseEntity<Object> searchBook(@RequestParam("term") String searchTerm){
+        List<Book> books=bookService.searchBooks(searchTerm);
         if(books==null || books.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Book Found");
         }
@@ -83,16 +85,16 @@ public class BookController {
 
     @GetMapping("/borrowedBooks")
     public ResponseEntity<Object> getAllBorrowedBooks(){
-        List<LinkedHashMap<String,Object>> books=bookService.booksBorrowedByPatron();
-        if(books==null || books.isEmpty()){
-            return ResponseEntity.ok("No books are currently borrowed");
+        List<Book> borrowedBooks=bookService.getAllBorrowedBooks();
+        if(borrowedBooks.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No borrowed books found");
         }
-        return ResponseEntity.ok(bookService.booksBorrowedByPatron());
+        return ResponseEntity.ok(borrowedBooks);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> updateBook(@PathVariable int id,@RequestBody Book book){
-        boolean update= bookService.updateBook(id,book);
+    public ResponseEntity<Object> updateBook(@PathVariable int id, @RequestBody BookUpdateDTO dto){
+        boolean update= bookService.updateBook(id,dto);
         if(update){
             return ResponseEntity.ok("Update book successfully");
 
