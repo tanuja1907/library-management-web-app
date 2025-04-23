@@ -101,7 +101,7 @@ public class BookController {
         }else{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
                     "message","Book not updated.Either book not found or already exist!",
-                    "status",400
+                    "status","Unsuccessful"
             ));
         }
     }
