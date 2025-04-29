@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 A Simple Library Management System built using java,springboot,mysql and jdbc
 
 ----
@@ -52,3 +53,6 @@ Method          Endpoint                  Description
 | DELETE | `/patron/{id}`              | Delete a patron and return borrowed books 
 | PATCH  | `/book/{id}`                | update patron by id   
 
+=======
+# React + Vite
+>>>>>>> 30eaa24 (LMS UI)
