@@ -36,23 +36,25 @@ public class BookService  {
     public List<Book> getAllBooks(){
         return bookRepository.findAll();
     }
-//
+
     public boolean borrowBook(BorrowRequestDTO borrowRequestDTO){
-        Optional<Book> findBook=bookRepository.findById(borrowRequestDTO.getBookId());
-        Optional<Patron> findPatron=patronRepository.findById(borrowRequestDTO.getPatronId());
-        if(findBook.isPresent() && findPatron.isPresent()){
-            Book book=findBook.get();
-            Patron patron=findPatron.get();
-            if(book.getAvailableCopies()>0){
+       Book book=bookRepository.findById(borrowRequestDTO.getBookId()).orElseThrow(()->new ResourceNotFoundException("Book not found with id:"+borrowRequestDTO.getBookId()));
+        Patron patron=patronRepository.findById(borrowRequestDTO.getPatronId()).orElseThrow(()->new ResourceNotFoundException("Patron not found with id:"+borrowRequestDTO.getPatronId()));
+        if (patron.getBorrowedBooks().contains(book)) {
+            throw new DuplicateEntryException("You have already borrowed this book");
+        }
+        if(book.getAvailableCopies()>0){
                 book.setAvailableCopies(book.getAvailableCopies()-1);
                 patron.getBorrowedBooks().add(book);
                 book.getPatrons().add(patron);
                 patronRepository.save(patron);
                 bookRepository.save(book);
                 return true;
-            }
+            }else{
+                throw new ResourceNotFoundException("No copies available for borrowing");
+
         }
-        return false;
+
     }
     public boolean returnBook(ReturnRequestDTO returnRequestDTO){
         Optional<Book> findBook=bookRepository.findById(returnRequestDTO.getBookId());
@@ -100,17 +102,30 @@ public class BookService  {
         Book findBook=bookRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("No book found with this id: "+id)) ;
         List<Patron> patrons=findBook.getPatrons();
         if(patrons!=null && !patrons.isEmpty()){
-            for (Patron patron : patrons) {
-                    patron.getBorrowedBooks().remove(findBook);
-                    patronRepository.save(patron);
-                }
-            }
+            throw new IllegalStateException("cannot delete borrowed book");
+        }
         bookRepository.delete(findBook);
         return true;
     }
 
-    public List<Book> getAllBorrowedBooks(){
-        return bookRepository.findAllBorrowedBooks();
+    public List<BorrowedBookResponseDTO> getAllBorrowedBooks(){
+        List<Book> borrowedBooks=bookRepository.findAllBorrowedBooks();
+        List<BorrowedBookResponseDTO> bookList=new ArrayList<>();
+        for(Book book:borrowedBooks){
+            List<BorrowedBookResponseDTO.PatronInfo> patronInfos=new ArrayList<>();
+            for(Patron patron:book.getPatrons()){
+                BorrowedBookResponseDTO.PatronInfo patronInfo=new BorrowedBookResponseDTO.PatronInfo(patron.getId(),patron.getName());
+                patronInfos.add(patronInfo);
+            }
+            BorrowedBookResponseDTO res=new BorrowedBookResponseDTO(
+                    book.getId(),
+                    book.getTitle(),
+                    book.getAvailableCopies(),
+                    patronInfos
+            );
+            bookList.add(res);
+        }
+        return bookList;
     }
 
     public boolean updateBook(int id, BookUpdateDTO bookUpdateDTO){
@@ -123,5 +138,8 @@ public class BookService  {
         if(bookUpdateDTO.getAvailableCopies()!=null)book.setAvailableCopies(bookUpdateDTO.getAvailableCopies());
         bookRepository.save(book);
         return true;
+    }
+    public Book getBookById(int id){
+        return bookRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("No book found with id: "+id));
     }
 }

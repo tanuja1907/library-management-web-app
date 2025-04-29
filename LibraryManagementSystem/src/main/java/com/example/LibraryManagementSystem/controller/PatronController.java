@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
+
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/patron")
 public class PatronController {
@@ -42,7 +43,7 @@ public class PatronController {
         if(patron){
             return ResponseEntity.ok("Patron Deleted successfully");
         }else{
-            return ResponseEntity.ok("Patron id doesn't exist");
+            return ResponseEntity.ok("Patron borrow book ,cannot be deleted");
         }
     }
 
@@ -65,17 +66,12 @@ public class PatronController {
         }
         return ResponseEntity.ok(patrons);
     }
-//
+
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updatePatronById(@PathVariable int id, @RequestBody PatronDTO patronDTO){
         PatronDTO update=patronService.updatePatron(id,patronDTO);
-//        if(update){
+
             return ResponseEntity.ok("Patron updated Successfully");
-//        }else{
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-//                    "message","Patron not updated . Either patron not found or already exist",
-//                     "status","failed"
-//            ));
-//        }
+
     }
 }

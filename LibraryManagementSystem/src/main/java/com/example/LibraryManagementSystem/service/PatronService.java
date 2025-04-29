@@ -28,15 +28,12 @@ public class PatronService {
     }
 
     public boolean deletePatronById(int patronId){
-       Optional<Patron> findPatron=patronRepository.findById(patronId);
-       if(findPatron.isPresent()){
-           Patron patron=findPatron.get();
-           patronRepository.delete(patron);
-           return true;
-       }else{
-           throw new ResourceNotFoundException("No patron found with id:"+patronId);
-
+       Patron patron=patronRepository.findById(patronId).orElseThrow(()->new ResourceNotFoundException("No patron found by id: "+patronId));
+       if(patron.getBorrowedBooks()!=null && !patron.getBorrowedBooks().isEmpty()) {
+           throw new IllegalStateException("Cannot delete patron who has borrowed books");
        }
+       patronRepository.delete(patron);
+       return  true;
     }
     public Patron getPatronById(int patronId){
         Optional<Patron> findPatron =patronRepository.findById(patronId);
@@ -56,8 +53,10 @@ public class PatronService {
        if(patronRepository.existsByNameAndIdNot(patronDTO.getName(),id)){
            throw new DuplicateEntryException("Another patron with the same not already exist");
        }
-       patron.setName(patronDTO.getName());
+        if(patronDTO.getName()!=null)patron.setName(patronDTO.getName());
+        if(patronDTO.getAge()!=null)patron.setAge(patronDTO.getAge());
+        if(patronDTO.getProfession()!=null) patron.setProfession(patronDTO.getProfession());
        patronRepository.save(patron);
-       return new PatronDTO(patron.getId(),patron.getName());
+       return new PatronDTO(patron.getId(),patron.getName(),patron.getAge(),patron.getProfession());
     }
 }

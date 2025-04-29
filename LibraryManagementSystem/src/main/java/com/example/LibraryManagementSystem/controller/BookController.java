@@ -1,8 +1,5 @@
 package com.example.LibraryManagementSystem.controller;
-import com.example.LibraryManagementSystem.dto.BookDTO;
-import com.example.LibraryManagementSystem.dto.BookUpdateDTO;
-import com.example.LibraryManagementSystem.dto.BorrowRequestDTO;
-import com.example.LibraryManagementSystem.dto.ReturnRequestDTO;
+import com.example.LibraryManagementSystem.dto.*;
 import com.example.LibraryManagementSystem.entity.Book;
 import com.example.LibraryManagementSystem.exception.ResourceNotFoundException;
 import com.example.LibraryManagementSystem.service.BookService;
@@ -14,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 
-
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/books")
 public class BookController {
@@ -36,6 +33,15 @@ public class BookController {
         return ResponseEntity.ok(books);
     }
 
+    @GetMapping("/{bookId}")
+    public ResponseEntity<Object> getBookById(@PathVariable int bookId){
+        Book book=bookService.getBookById(bookId);
+        if(book!=null){
+            return ResponseEntity.ok(book);
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Book Found");
+        }
+    }
 
     @PostMapping("/borrow")
     public ResponseEntity<String> borrowBook(@RequestBody BorrowRequestDTO borrowRequestDTO) throws ResourceNotFoundException {
@@ -79,13 +85,13 @@ public class BookController {
         if(book) {
             return ResponseEntity.ok("Book Deleted Successfully");
         }else {
-            return ResponseEntity.ok("Book Id doesn't exist");
+            return ResponseEntity.ok("Cannot delete borrowed book");
         }
     }
 
     @GetMapping("/borrowedBooks")
     public ResponseEntity<Object> getAllBorrowedBooks(){
-        List<Book> borrowedBooks=bookService.getAllBorrowedBooks();
+        List<BorrowedBookResponseDTO> borrowedBooks=bookService.getAllBorrowedBooks();
         if(borrowedBooks.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No borrowed books found");
         }
