@@ -65,7 +65,7 @@ const BorrowBook = () => {
     };
 
     return (
-        <div className="p-6 max-w-md mx-auto bg-white shadow-md rounded-md">
+        <div className="p-6 max-w-md mx-auto bg-white shadow-md rounded-md mt-20">
             <h2 className="text-blue-500 text-2xl font-bold mb-6 text-center">Borrow Book</h2>
             
             <div className="mb-4">

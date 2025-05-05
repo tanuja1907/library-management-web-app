@@ -37,13 +37,13 @@ const UpdatePatron = () => {
   const handleUpdate = async (data) => {
     const bookData = {
       ...data,
-      age: parseInt(data.age, 10), // Ensure it's a number
+      age: parseInt(data.age, 10), 
     };
     try {
       const response=await axios.patch(`http://localhost:8080/patron/${id}`, bookData);
       console.log("backend Response:", response.data);
       toast.success("patron updated successfully!");
-      navigate("/patrons/allPatrons", { state: { bookUpdated: true } });
+      navigate("/allPatrons", { state: { bookUpdated: true } });
       console.log("Book updated successfully!");
     } catch (err) {
       console.error("Error updating book:", err);
