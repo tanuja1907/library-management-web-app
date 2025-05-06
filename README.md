@@ -18,7 +18,7 @@ Tables
    - `id` (INT, PK, AUTO_INCREMENT)
    - `title` (VARCHAR, UNIQUE)
    - `author` (VARCHAR)
-- `avilableBook` (INTEGER)
+   - `avilableCopies` (INTEGER)
 
 2. **patrons**
    - `id` (INT, PK, AUTO_INCREMENT)

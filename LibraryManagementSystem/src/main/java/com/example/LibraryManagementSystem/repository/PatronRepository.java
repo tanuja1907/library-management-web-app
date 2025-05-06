@@ -9,7 +9,7 @@ import java.util.Optional;
 
 
 @Repository
-public interface PatronRepository extends JpaRepository<Patron,Integer> {
+public interface PatronRepository extends JpaRepository<Patron, Integer> {
     List<Patron> findByNameContainingIgnoreCase(String searctTerm);
 
     Optional<Patron> findByName(String name);
