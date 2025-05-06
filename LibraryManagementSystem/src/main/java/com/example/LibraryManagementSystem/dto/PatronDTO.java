@@ -9,15 +9,17 @@ public class PatronDTO {
     private Integer age;
     private String profession;
 
-    public PatronDTO(int patronId, String name,Integer age,String profession) {
+    public PatronDTO(int patronId, String name, Integer age, String profession) {
         this.patronId = patronId;
         this.name = name;
-        this.age=age;
-        this.profession=profession;
+        this.age = age;
+        this.profession = profession;
+
     }
-    public void setProfession(){
-        if(profession!=null){
-            this.profession=profession.trim().toLowerCase();
+
+    public void setProfession() {
+        if (profession != null) {
+            this.profession = profession.trim().toLowerCase();
         }
     }
 }

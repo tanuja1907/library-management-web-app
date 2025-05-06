@@ -10,10 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler{
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> handleResourceNotFound(ResourceNotFoundException ex){
+    public ResponseEntity<String> handleResourceNotFound(ResourceNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
@@ -28,7 +28,7 @@ public class GlobalExceptionHandler{
     }
 
     @ExceptionHandler(DuplicateEntryException.class)
-    public ResponseEntity<String> duplicateEntryException(DuplicateEntryException ex){
+    public ResponseEntity<String> duplicateEntryException(DuplicateEntryException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

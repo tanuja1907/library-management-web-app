@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BookRepository extends JpaRepository<Book,Integer> {
+public interface BookRepository extends JpaRepository<Book, Integer> {
     Optional<Book> findById(int id);
 
     Optional<Book> findByTitle(String title);
@@ -18,7 +18,7 @@ public interface BookRepository extends JpaRepository<Book,Integer> {
     @Query("SELECT b from Book b JOIN b.patrons p WHERE p.id= :patronId")
     List<Book> findBooksByPatronId(@Param("patronId") int patronId);
 
-    @Query("SELECT b from Book b WHERE Lower(b.title) LIKE LOWER(CONCAT('%',:searchTerm,'%')) "+
+    @Query("SELECT b from Book b WHERE Lower(b.title) LIKE LOWER(CONCAT('%',:searchTerm,'%')) " +
             "OR Lower(b.author) LIKE LOWER(CONCAT('%',:searchTerm,'%')) ")
     List<Book> searchBookByTitleOrAuthor(String searchTerm);
 

@@ -23,7 +23,7 @@ public class BorrowedBookResponseDTO {
         private int patronId;
         private String name;
 
-        public  PatronInfo(int patronId, String patronName) {
+        public PatronInfo(int patronId, String patronName) {
             this.patronId = patronId;
             this.name = patronName;
         }
