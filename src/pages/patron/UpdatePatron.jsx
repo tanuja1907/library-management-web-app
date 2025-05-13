@@ -15,7 +15,6 @@ const UpdatePatron = () => {
   const form = useForm({
     defaultValues: {
       name: "",
-      age: "",
       profession: "",
     },
   });
@@ -37,7 +36,6 @@ const UpdatePatron = () => {
   const handleUpdate = async (data) => {
     const bookData = {
       ...data,
-      age: parseInt(data.age, 10), 
     };
     try {
       const response=await axios.patch(`http://localhost:8080/patron/${id}`, bookData);
@@ -75,21 +73,7 @@ const UpdatePatron = () => {
 
           />
 
-          <FormField
-            name="age"
-            control={control}
-            render={({ field }) => (
-              <>
-                <FormLabel>Age</FormLabel>
-                <FormControl>
-                  <Input type="number" {...field}
-                  className="border-gray-300 text-black hover:border-blue-500 focus:border-blue-600 transition duration-300" 
-                  required />
-                </FormControl>
-                <FormMessage />
-              </>
-            )}
-            />
+          
 
           
 

@@ -6,14 +6,13 @@ import { useNavigate } from 'react-router-dom';
 
 const AddPatrons = () => {
   const [name, setName] = useState('');
-  const [age, setAge] = useState('');
   const [profession, setProfession] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const newPatron = { name, age, profession };
+      const newPatron = { name, profession };
       await axios.post('http://localhost:8080/patron', newPatron);
       toast.success('Patron added successfully!');
       navigate('/allPatrons');
@@ -47,18 +46,7 @@ const AddPatrons = () => {
             />
           </div>
 
-          <div>
-            <label htmlFor="age" className="block text-lg font-medium text-blue-800 mb-2">Age</label>
-            <input
-              type="number"
-              id="age"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              className="w-full p-4 rounded-lg border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-gray-800"
-              placeholder="Enter patron's age"
-              required
-            />
-          </div>
+
 
           <div>
             <label htmlFor="profession" className="block text-lg font-medium text-blue-800 mb-2">Profession</label>

@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
+
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/patron")
 public class PatronController {
@@ -29,53 +30,48 @@ public class PatronController {
 
     @GetMapping
     public ResponseEntity<Object> getAllPatrons() {
-        List<Patron> patrons=patronService.getAllPatrons();
-        if(patrons==null || patrons.isEmpty()){
+        List<Patron> patrons = patronService.getAllPatrons();
+        if (patrons == null || patrons.isEmpty()) {
             return ResponseEntity.ok("No patron added yet");
         }
         return ResponseEntity.ok(patrons);
     }
 
     @DeleteMapping("/{patronId}")
-    public ResponseEntity<String> deletePatronById(@PathVariable int patronId){
-        boolean patron=patronService.deletePatronById(patronId);
-        if(patron){
+    public ResponseEntity<String> deletePatronById(@PathVariable int patronId) {
+        boolean patron = patronService.deletePatronById(patronId);
+        if (patron) {
             return ResponseEntity.ok("Patron Deleted successfully");
-        }else{
-            return ResponseEntity.ok("Patron id doesn't exist");
+        } else {
+            return ResponseEntity.ok("Patron borrow book ,cannot be deleted");
         }
     }
 
     @GetMapping("/{patronId}")
-    public ResponseEntity<Object> getPatronById(@PathVariable int patronId){
-        Patron patron =patronService.getPatronById(patronId);
-        if(patron!=null){
+    public ResponseEntity<Object> getPatronById(@PathVariable int patronId) {
+        Patron patron = patronService.getPatronById(patronId);
+        if (patron != null) {
             return ResponseEntity.ok(patron);
-        }else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("Error!!!","Patron with id:"+patronId+" not found"));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("Error!!!", "Patron with id:" + patronId + " not found"));
         }
 
     }
 
     @GetMapping("/search")
-    public  ResponseEntity<Object> searchPatron(@RequestParam String pattern){
-        List<Patron> patrons=patronService.searchPatron(pattern);
-        if(patrons==null || patrons.isEmpty()){
+    public ResponseEntity<Object> searchPatron(@RequestParam String pattern) {
+        List<Patron> patrons = patronService.searchPatron(pattern);
+        if (patrons == null || patrons.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Such Patrons Found");
         }
         return ResponseEntity.ok(patrons);
     }
-//
+
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> updatePatronById(@PathVariable int id, @RequestBody PatronDTO patronDTO){
-        PatronDTO update=patronService.updatePatron(id,patronDTO);
-//        if(update){
-            return ResponseEntity.ok("Patron updated Successfully");
-//        }else{
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-//                    "message","Patron not updated . Either patron not found or already exist",
-//                     "status","failed"
-//            ));
-//        }
+    public ResponseEntity<Object> updatePatronById(@PathVariable int id, @RequestBody PatronDTO patronDTO) {
+        PatronDTO update = patronService.updatePatron(id, patronDTO);
+
+        return ResponseEntity.ok("Patron updated Successfully");
+
     }
 }

@@ -100,7 +100,6 @@ const GetAllPatrons = () => {
               <tr className="bg-gray-100">
                 <th className="p-5 border-b border-gray-300 text-center">ID</th>
                 <th className="p-5 border-b border-gray-300 text-center">Name</th>
-                <th className="p-5 border-b border-gray-300 text-center">Age</th>
                 <th className="p-5 border-b border-gray-300 text-center">Profession</th>
                 <th className="p-5 border-b border-gray-300 text-center">Actions</th>
               </tr>
@@ -110,7 +109,6 @@ const GetAllPatrons = () => {
                 <tr key={patron.id} className="bg-white hover:bg-gray-50 transition border-t border-gray-300">
                   <td className="p-5 border-r border-gray-200 text-center">{patron.id}</td>
                   <td className="p-5 border-r border-gray-200 text-center">{patron.name}</td>
-                  <td className="p-5 border-r border-gray-200 text-center">{patron.age}</td>
                   <td className="p-5 border-r border-gray-200 text-center">{patron.profession}</td>
                   <td className="p-5 flex justify-center gap-2">
                     <Button
